@@ -1,2 +1,1 @@
-# first-year-C--projects
-all the c++ projects made in first year 
+# A C++ game simulating a carrom board
