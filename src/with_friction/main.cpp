@@ -3,16 +3,12 @@
 // there is a small glicth
 
 int main() {
-    char replay;
-
-    initCanvas("carrom_board", 1100, 700);
+    initCanvas("Carrom Chase", 1100, 700);
     // board
     Rectangle r2(550, 350, 570, 570);
-    r2.setColor(COLOR(153, 76, 0));
-    r2.setFill();
+    r2.setColor(COLOR(153, 76, 0)).setFill();
     Rectangle r1(550, 350, 520, 520);
-    r1.setColor(COLOR(255, 255, 153));
-    r1.setFill();
+    r1.setColor(COLOR(255, 255, 153)).setFill();
 
     // side rectangles
     Rectangle r3(550, 145, 350, 20);
@@ -26,23 +22,19 @@ int main() {
 
     // pockets
     Circle c5(790, 110, 15);
-    c5.setColor(COLOR(255, 255, 255));
-    c5.setFill();
+    c5.setColor(COLOR(255, 255, 255)).setFill();
     Circle c50(790, 110, 15);
 
     Circle c6(310, 110, 15);
-    c6.setColor(COLOR(255, 255, 255));
-    c6.setFill();
+    c6.setColor(COLOR(255, 255, 255)).setFill();
     Circle c60(310, 110, 15);
 
     Circle c7(790, 590, 15);
-    c7.setColor(COLOR(255, 255, 255));
-    c7.setFill();
+    c7.setColor(COLOR(255, 255, 255)).setFill();
     Circle c70(790, 590, 15);
 
     Circle c8(310, 590, 15);
-    c8.setColor(COLOR(255, 255, 255));
-    c8.setFill();
+    c8.setColor(COLOR(255, 255, 255)).setFill();
     Circle c80(310, 590, 15);
 
     // connecting circles
@@ -55,50 +47,42 @@ int main() {
     Circle ca1(345, 175, 11);
     ca1.setFill();
     Circle ca10(345, 175, 7);
-    ca10.setColor(COLOR(255, 0, 0));
-    ca10.setFill();
+    ca10.setColor(COLOR(255, 0, 0)).setFill();
 
     Circle ca2(345, 525, 11);
     ca2.setFill();
     Circle ca20(345, 525, 7);
-    ca20.setColor(COLOR(255, 0, 0));
-    ca20.setFill();
+    ca20.setColor(COLOR(255, 0, 0)).setFill();
 
     Circle ca3(755, 175, 11);
     ca3.setFill();
     Circle ca30(755, 175, 7);
-    ca30.setColor(COLOR(255, 0, 0));
-    ca30.setFill();
+    ca30.setColor(COLOR(255, 0, 0)).setFill();
 
     Circle ca4(755, 525, 11);
     ca4.setFill();
     Circle ca40(755, 525, 7);
-    ca40.setColor(COLOR(255, 0, 0));
-    ca40.setFill();
+    ca40.setColor(COLOR(255, 0, 0)).setFill();
 
     Circle ca5(375, 145, 11);
     ca5.setFill();
     Circle ca50(375, 145, 7);
-    ca50.setColor(COLOR(255, 0, 0));
-    ca50.setFill();
+    ca50.setColor(COLOR(255, 0, 0)).setFill();
 
     Circle ca6(725, 145, 11);
     ca6.setFill();
     Circle ca60(725, 145, 7);
-    ca60.setColor(COLOR(255, 0, 0));
-    ca60.setFill();
+    ca60.setColor(COLOR(255, 0, 0)).setFill();
 
     Circle ca7(375, 555, 11);
     ca7.setFill();
     Circle ca70(375, 555, 7);
-    ca70.setColor(COLOR(255, 0, 0));
-    ca70.setFill();
+    ca70.setColor(COLOR(255, 0, 0)).setFill();
 
     Circle ca8(725, 555, 11);
     ca8.setFill();
     Circle ca80(725, 555, 7);
-    ca80.setColor(COLOR(255, 0, 0));
-    ca80.setFill();
+    ca80.setColor(COLOR(255, 0, 0)).setFill();
 
     // mid circles
     Circle crefer(550, 350, 150);
@@ -149,8 +133,7 @@ int main() {
     Circle cenblack_outline(550, 350, 10);
     Circle cen_outer_black(550, 350, 14);
     Circle cenred(550, 350, 9);
-    cenred.setColor(COLOR("red"));
-    cenred.setFill();
+    cenred.setColor(COLOR(255, 0, 0)).setFill();
 
     Circle cblack_outline2(550, 350, 70);
     Circle cblack_outline3(550, 350, 60);
@@ -179,8 +162,7 @@ int main() {
                 else { continue; }
             }
             Circle c1(x, y, 9);
-            c1.setColor(COLOR(50, 50, 255));
-            c1.setFill();
+            c1.setColor(COLOR(50, 50, 255)).setFill();
 
             // aiming circles creation
             while (true) {
@@ -203,8 +185,7 @@ int main() {
 
             // chaser carrom created in every
             Circle cd(p, q, 45);
-            cd.setColor(COLOR(204, 102, 0));
-            cd.setFill();
+            cd.setColor(COLOR(204, 102, 0)).setFill();
 
             while (true) {
                 wait(0.01);
@@ -237,8 +218,7 @@ int main() {
 
                 //caught by chaser condn
                 if ((x - p) * (x - p) + (y - q) * (y - q) <= 3500) {
-                    cd.setColor(COLOR(255, 0, 0));
-                    cd.setFill();
+                    cd.setColor(COLOR(255, 0, 0)).setFill();
                     wait(2);
                     break;
                 }
@@ -280,6 +260,7 @@ int main() {
         //single game ends
         //score output and ask for another game
         cout << "Your score is =" << " " << i << endl << "do you want to play another game? y or n" << endl;
+        char replay;
         cin >> replay;
         if (replay == 'n') { break; }
         if (replay == 'y') { continue; }
