@@ -1,0 +1,8 @@
+fusion: src/
+	g++ src/with_friction/main.cpp -Wall lib/libsprite.a -Iinclude -I/usr/include/X11 -L/usr/X11R6/lib -lX11 -std=c++11 -o carromchase
+
+play:
+	./carromchase
+
+clean:
+	rm carromchase
