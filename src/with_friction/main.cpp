@@ -1,6 +1,106 @@
 #include <simplecpp>
+#include "../utils.cpp"
 
 // there is a small glicth
+
+const Vector2d centerOfBoard(550, 350);
+const Vector2d pocket1Position(310, 110);
+const Vector2d pocket2Position(790, 110);
+const Vector2d pocket3Position(310, 590);
+const Vector2d pocket4Position(790, 590);
+
+int startGame() {
+    int score = 0;
+
+    Vector2d runnerPosition;
+    Vector2d chaserPosition(550, 350);
+    // single game
+    while (true) {
+
+        // place runner
+        while (true) {
+            Vector2d click;
+            registerClick(&click);
+            runnerPosition.set(&click);
+            if (Vector2d().setDiffOf(&runnerPosition, &centerOfBoard)->length() <= 150) { break; }
+        }
+        Circle runner(runnerPosition.x, runnerPosition.y, 9);
+        runner.setColor(COLOR(50, 50, 255)).setFill();
+
+        // create aim circles
+        // direction and the speed are taken from aimPoint
+        Vector2d aimPoint;
+        while (true) {
+            Circle c2(runnerPosition.x, runnerPosition.y, 50);
+            c2.setColor(COLOR(255, 0, 0));
+            Circle c3(runnerPosition.x, runnerPosition.y, 35);
+            c3.setColor(COLOR(255, 100, 100));
+            Circle c4(runnerPosition.x, runnerPosition.y, 20);
+            c4.setColor(COLOR(255, 200, 200));
+            registerClick(&aimPoint);
+            if (Vector2d().setDiffOf(&runnerPosition, &aimPoint)->length() <= 50) { break; }
+        }
+
+
+        double dx = (aimPoint.x - runnerPosition.x) / 5;
+        double dy = (aimPoint.y - runnerPosition.y) / 5;
+        double dp = dx;
+        double dq = dy;//direction and speed taken care of by proportionality
+
+        // chaser
+        Circle chaser(chaserPosition.x, chaserPosition.y, 45);
+        chaser.setColor(COLOR(204, 102, 0)).setFill();
+
+        while (true) {
+            wait(0.01);
+
+            // bouncing off walls
+            if (chaserPosition.x <= 335 || chaserPosition.x >= 765) { dp = -dp; }
+            if (chaserPosition.y <= 135 || chaserPosition.y >= 565) { dq = -dq; }
+
+            if (runnerPosition.x <= 300 || runnerPosition.x >= 800) { dx = -dx; }
+            if (runnerPosition.y <= 100 || runnerPosition.y >= 600) { dy = -dy; }
+
+            // movement
+            runner.move(dx, dy);
+            //friction control
+            dx = dx - dx / 100;
+            dy = dy - dy / 100;
+            if ((dx >= -0.1 && dx <= 0.1) && (dy >= -0.1 && dy <= 0.1)) { return score; }
+
+            double Dp = score * dp, Dq = score * dq;
+            chaser.move(Dp, Dq);
+            //friction control
+            if ((dp <= -0.05 || dp >= 0.05) || (dq <= -0.05 || dq >= 0.05)) {
+                dp = dp - dp / 50;
+                dq = dq - dq / 50;
+            }
+            //co-ordinated data collection
+            runnerPosition.set(runner.getX(), runner.getY());
+            chaserPosition.set(chaser.getX(), chaser.getY());
+
+            // caught by chaser
+            if (Vector2d().setDiffOf(&runnerPosition, &chaserPosition)->length() <= 60) {
+                chaser.setColor(COLOR(255, 0, 0)).setFill();
+                wait(2);
+                return score;
+            }
+
+            // in pocket
+            const double SQRT70 = sqrt(70);
+            if (Vector2d().setDiffOf(&runnerPosition, &pocket1Position)->length() <= SQRT70
+                || Vector2d().setDiffOf(&runnerPosition, &pocket2Position)->length() <= SQRT70
+                || Vector2d().setDiffOf(&runnerPosition, &pocket3Position)->length() <= SQRT70
+                || Vector2d().setDiffOf(&runnerPosition, &pocket4Position)->length() <= SQRT70) {
+
+                runner.setColor(COLOR(0, 0, 0));
+                wait(0.1);
+                score++;
+                break;
+            }
+        }
+    }
+}
 
 int main() {
     initCanvas("Carrom Chase", 1100, 700);
@@ -144,126 +244,14 @@ int main() {
     Line s3(550 - 70, 350 + 70, 430 - 100, 470 + 100);
     Line s4(550 + 70, 350 + 70, 670 + 100, 470 + 100);
 
-    int z, w;
-    float x, y, a, b;
+
     while (true) {
-        int i = 0;
-        float p = 550, q = 350;
+        int score = startGame();
 
-        // single game
-        while (true) {
-
-            // place puck
-            while (true) {
-                z = getClick();
-                x = z / 65536;
-                y = z % 65536;
-                if ((x - 550) * (x - 550) + (y - 350) * (y - 350) <= 150 * 150) { break; }
-                else { continue; }
-            }
-            Circle c1(x, y, 9);
-            c1.setColor(COLOR(50, 50, 255)).setFill();
-
-            // aiming circles creation
-            while (true) {
-                Circle c2(x, y, 50);
-                Circle c3(x, y, 35);
-                Circle c4(x, y, 20);
-                c2.setColor(COLOR(255, 0, 0));
-                c3.setColor(COLOR(255, 100, 100));
-                c4.setColor(COLOR(255, 200, 200));
-                w = getClick();
-                a = w / 65536;
-                b = w % 65536;
-                if ((a - x) * (a - x) + (b - y) * (b - y) > 2500) { continue; }
-                if ((a - x) * (a - x) + (b - y) * (b - y) <= 2500) { break; }
-            }//the direction and the speed are taken in form of click
-
-
-            float dx = (a - x) / 5, dy =
-                    (b - y) / 5, dp = dx, dq = dy;//direction and speed taken care of by proportionality
-
-            // chaser carrom created in every
-            Circle cd(p, q, 45);
-            cd.setColor(COLOR(204, 102, 0)).setFill();
-
-            while (true) {
-                wait(0.01);
-                if (p <= 335 || p >= 765) { dp = -dp; }
-                if (q <= 135 || q >= 565) { dq = -dq; }
-
-                if (x <= 300 || x >= 800) { dx = -dx; }
-                if (y <= 100 || y >= 600) { dy = -dy; }
-                //bouncing condns
-
-                //moving conditions
-                c1.move(dx, dy);
-                //friction control
-                dx = dx - dx / 100;
-                dy = dy - dy / 100;
-                if ((dx >= -0.1 && dx <= 0.1) && (dy >= -0.1 && dy <= 0.1)) { break; }
-
-                float Dp = i * dp, Dq = i * dq;
-                cd.move(Dp, Dq);
-                //friction control
-                if ((dp <= -0.05 || dp >= 0.05) || (dq <= -0.05 || dq >= 0.05)) {
-                    dp = dp - dp / 50;
-                    dq = dq - dq / 50;
-                }
-                //co-ordinated data collection
-                x = c1.getX();
-                y = c1.getY();
-                p = cd.getX();
-                q = cd.getY();
-
-                //caught by chaser condn
-                if ((x - p) * (x - p) + (y - q) * (y - q) <= 3500) {
-                    cd.setColor(COLOR(255, 0, 0)).setFill();
-                    wait(2);
-                    break;
-                }
-
-                //pocket conditions
-                if ((x - 310) * (x - 310) + (y - 110) * (y - 110) <= 70) {
-                    c1.setColor(COLOR(0, 0, 0));
-                    wait(0.1);
-                    i++;
-                    break;
-                }
-                if ((x - 790) * (x - 790) + (y - 110) * (y - 110) <= 70) {
-                    c1.setColor(COLOR(0, 0, 0));
-                    wait(0.1);
-                    i++;
-                    break;
-                }
-                if ((x - 310) * (x - 310) + (y - 590) * (y - 590) <= 70) {
-                    c1.setColor(COLOR(0, 0, 0));
-                    wait(0.1);
-                    i++;
-                    break;
-                }
-                if ((x - 790) * (x - 790) + (y - 590) * (y - 590) <= 70) {
-                    c1.setColor(COLOR(0, 0, 0));
-                    wait(0.1);
-                    i++;
-                    break;
-                }
-
-            }
-
-            // control reaches here then if both below condns are not satisfd then it means carrom is in pockets and this game continues
-            if ((x - p) * (x - p) + (y - q) * (y - q) <= 3600) { break; }
-            if ((dx >= -0.1 && dx <= 0.1) && (dy >= -0.1 && dy <= 0.1)) { break; }
-
-        }
-
-        //single game ends
-        //score output and ask for another game
-        cout << "Your score is =" << " " << i << endl << "do you want to play another game? y or n" << endl;
+        // output score and ask for another game
+        cout << "Your score is =" << " " << score << endl << "do you want to play another game? y or n" << endl;
         char replay;
         cin >> replay;
         if (replay == 'n') { break; }
-        if (replay == 'y') { continue; }
-        //if no then game play ends and eventually main program ends
     }
 }
