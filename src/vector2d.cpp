@@ -11,11 +11,6 @@ struct Vector2d {
 
     double length() { return sqrt(x * x + y * y); }
 
-    Vector2d *setDiffOf(const Vector2d *a, const Vector2d *b) {
-        this->set(a->x - b->x, a->y - b->y);
-        return this;
-    }
-
     Vector2d *set(const double x, const double y) {
         this->x = x;
         this->y = y;
@@ -24,5 +19,11 @@ struct Vector2d {
 
     Vector2d *set(const Vector2d *copy) {
         return this->set(copy->x, copy->y);
+    }
+
+    static Vector2d diffOf(const Vector2d *a, const Vector2d *b) {
+        Vector2d newVector2d;
+        newVector2d.set(a->x - b->x, a->y - b->y);
+        return newVector2d;
     }
 };

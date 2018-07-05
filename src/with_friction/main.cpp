@@ -1,4 +1,5 @@
 #include <simplecpp>
+#include <sstream>
 #include "../utils.cpp"
 
 // there is a small glicth
@@ -8,6 +9,9 @@ const Vector2d pocket1Position(310, 110);
 const Vector2d pocket2Position(790, 110);
 const Vector2d pocket3Position(310, 590);
 const Vector2d pocket4Position(790, 590);
+
+const Vector2d yesBtnPosition(100, 70);
+const Vector2d noBtnPosition(160, 70);
 
 int startGame() {
     int score = 0;
@@ -22,7 +26,7 @@ int startGame() {
             Vector2d click;
             registerClick(&click);
             runnerPosition.set(&click);
-            if (Vector2d().setDiffOf(&runnerPosition, &centerOfBoard)->length() <= 150) { break; }
+            if (Vector2d::diffOf(&runnerPosition, &centerOfBoard).length() <= 150) { break; }
         }
         Circle runner(runnerPosition.x, runnerPosition.y, 9);
         runner.setColor(COLOR(50, 50, 255)).setFill();
@@ -38,7 +42,7 @@ int startGame() {
             Circle c4(runnerPosition.x, runnerPosition.y, 20);
             c4.setColor(COLOR(255, 200, 200));
             registerClick(&aimPoint);
-            if (Vector2d().setDiffOf(&runnerPosition, &aimPoint)->length() <= 50) { break; }
+            if (Vector2d::diffOf(&runnerPosition, &aimPoint).length() <= 50) { break; }
         }
 
 
@@ -80,18 +84,18 @@ int startGame() {
             chaserPosition.set(chaser.getX(), chaser.getY());
 
             // caught by chaser
-            if (Vector2d().setDiffOf(&runnerPosition, &chaserPosition)->length() <= 60) {
+            if (Vector2d::diffOf(&runnerPosition, &chaserPosition).length() <= 60) {
                 chaser.setColor(COLOR(255, 0, 0)).setFill();
-                wait(2);
+                wait(1);
                 return score;
             }
 
             // in pocket
             const double SQRT70 = sqrt(70);
-            if (Vector2d().setDiffOf(&runnerPosition, &pocket1Position)->length() <= SQRT70
-                || Vector2d().setDiffOf(&runnerPosition, &pocket2Position)->length() <= SQRT70
-                || Vector2d().setDiffOf(&runnerPosition, &pocket3Position)->length() <= SQRT70
-                || Vector2d().setDiffOf(&runnerPosition, &pocket4Position)->length() <= SQRT70) {
+            if (Vector2d::diffOf(&runnerPosition, &pocket1Position).length() <= SQRT70
+                || Vector2d::diffOf(&runnerPosition, &pocket2Position).length() <= SQRT70
+                || Vector2d::diffOf(&runnerPosition, &pocket3Position).length() <= SQRT70
+                || Vector2d::diffOf(&runnerPosition, &pocket4Position).length() <= SQRT70) {
 
                 runner.setColor(COLOR(0, 0, 0));
                 wait(0.1);
@@ -244,14 +248,26 @@ int main() {
     Line s3(550 - 70, 350 + 70, 430 - 100, 470 + 100);
     Line s4(550 + 70, 350 + 70, 670 + 100, 470 + 100);
 
-
     while (true) {
         int score = startGame();
 
         // output score and ask for another game
-        cout << "Your score is =" << " " << score << endl << "do you want to play another game? y or n" << endl;
-        char replay;
-        cin >> replay;
-        if (replay == 'n') { break; }
+        ostringstream oss;
+        oss << "Your score is = " << score << ". " << "Do you want to play another game?";
+        Text message(200, 30, oss.str());
+        // yes no buttons
+        Circle yesBtn(yesBtnPosition.x, yesBtnPosition.y, 20);
+        yesBtn.setColor(COLOR(0, 255, 0)).setFill();
+        Text yesBtnText(yesBtnPosition.x, yesBtnPosition.y, "Yes");
+        Circle noBtn(noBtnPosition.x, noBtnPosition.y, 20);
+        noBtn.setColor(COLOR(255, 0, 0)).setFill();
+        Text noBtnText(noBtnPosition.x, noBtnPosition.y, "No");
+
+        while (true) {
+            Vector2d click;
+            registerClick(&click);
+            if (Vector2d::diffOf(&click, &yesBtnPosition).length() <= 20) { break; }
+            if (Vector2d::diffOf(&click, &noBtnPosition).length() <= 20) { return 0; }
+        }
     }
 }
