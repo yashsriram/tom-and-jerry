@@ -23,6 +23,8 @@ int startGame() {
 
         // place runner
         while (true) {
+            Circle crefer(550, 350, 150);
+            crefer.setColor(COLOR(255, 0, 102));
             Vector2d click;
             registerClick(&click);
             runnerPosition.set(&click);
@@ -189,9 +191,6 @@ int main() {
     ca80.setColor(COLOR(255, 0, 0)).setFill();
 
     // mid circles
-    Circle crefer(550, 350, 150);
-    crefer.setColor(COLOR(255, 255, 102));
-
     Circle couter_mid_circle(550, 350, 75);
 
     Circle cinnerred(550, 350, 70);
