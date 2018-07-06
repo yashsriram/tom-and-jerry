@@ -32,7 +32,6 @@ public:
 
     Vector2d aim() {
         Vector2d aimPoint;
-        Vector2d aimVector;
         Vector2d runnerPosition(circle.getX(), circle.getY());
         while (true) {
             // create aim circles
@@ -43,11 +42,11 @@ public:
             Circle c4(runnerPosition.x, runnerPosition.y, 20);
             c4.setColor(COLOR(255, 200, 200));
             registerClick(&aimPoint);
-            aimVector = Vector2d::diffOf(&aimPoint, &runnerPosition);
-            if (aimVector.length() <= AIM_LIMIT) { break; }
+            ds = Vector2d::diffOf(&aimPoint, &runnerPosition);
+            if (ds.length() <= AIM_LIMIT) { break; }
         }
         // direction and the speed are taken from aimVector
-        ds = aimVector.mulBy(AIM_SCALE);
+        ds.mulBy(AIM_SCALE);
         return ds;
     }
 
@@ -323,12 +322,12 @@ int main() {
         // output score and ask for another game
         ostringstream oss;
         oss << "Your score is = " << score << ". " << "Do you want to play another game?";
-        Text message(200, 30, oss.str());
+        Text message(500, 30, oss.str());
         // yes no buttons
-        Circle yesBtn(yesBtnPosition.x, yesBtnPosition.y, 20);
+        Circle yesBtn(yesBtnPosition.x, yesBtnPosition.y, 30);
         yesBtn.setColor(COLOR(0, 255, 0)).setFill();
         Text yesBtnText(yesBtnPosition.x, yesBtnPosition.y, "Yes");
-        Circle noBtn(noBtnPosition.x, noBtnPosition.y, 20);
+        Circle noBtn(noBtnPosition.x, noBtnPosition.y, 30);
         noBtn.setColor(COLOR(255, 0, 0)).setFill();
         Text noBtnText(noBtnPosition.x, noBtnPosition.y, "No");
 
