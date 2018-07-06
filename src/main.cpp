@@ -153,7 +153,7 @@ int startGame() {
 
             // movement
             runner.move();
-            chaser.move(score);
+            chaser.move(1 + score * 0.14);
 
             Vector2d runnerPosition = runner.getPosition();
             Vector2d chaserPosition = chaser.getPosition();
