@@ -12,6 +12,7 @@ const Vector2d pocket4Position(790, 590);
 
 const Vector2d yesBtnPosition(100, 70);
 const Vector2d noBtnPosition(160, 70);
+const double SQRT70 = sqrt(70);
 
 class Runner {
     constexpr static double CIRCLE_RADIUS = 9;
@@ -164,7 +165,6 @@ int startGame() {
             }
 
             // in pocket
-            const double SQRT70 = sqrt(70);
             if (Vector2d::diffOf(&runnerPosition, &pocket1Position).length() <= SQRT70
                 || Vector2d::diffOf(&runnerPosition, &pocket2Position).length() <= SQRT70
                 || Vector2d::diffOf(&runnerPosition, &pocket3Position).length() <= SQRT70
