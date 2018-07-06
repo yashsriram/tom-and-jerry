@@ -124,19 +124,22 @@ public:
 int startGame() {
     int score = 0;
 
+    bool replaceRunner = true;
     Runner runner;
     Chaser chaser(550, 350);
     // single game
     while (true) {
         // place runner
-        Vector2d click;
-        while (true) {
-            Circle aimLimit(550, 350, 150);
-            aimLimit.setColor(COLOR(255, 0, 102));
-            registerClick(&click);
-            if (Vector2d::diffOf(&click, &centerOfBoard).length() <= 150) { break; }
+        if (replaceRunner) {
+            Vector2d click;
+            while (true) {
+                Circle aimLimit(550, 350, 150);
+                aimLimit.setColor(COLOR(255, 0, 102));
+                registerClick(&click);
+                if (Vector2d::diffOf(&click, &centerOfBoard).length() <= 150) { break; }
+            }
+            runner.place(click.x, click.y);
         }
-        runner.place(click.x, click.y);
 
         Vector2d ds = runner.aim();
         chaser.setDs(ds);
@@ -152,16 +155,13 @@ int startGame() {
             runner.move();
             chaser.move(score);
 
-            if (runner.isAtRest() && chaser.isAtRest()) { return score; }
+            if (runner.isAtRest() && chaser.isAtRest()) {
+                replaceRunner = false;
+                break;
+            }
 
             Vector2d runnerPosition = runner.getPosition();
             Vector2d chaserPosition = chaser.getPosition();
-
-            // caught by chaser
-            if (Vector2d::diffOf(&runnerPosition, &chaserPosition).length() <= 60) {
-                chaser.onCatchingRunner();
-                return score;
-            }
 
             // in pocket
             if (Vector2d::diffOf(&runnerPosition, &pocket1Position).length() <= SQRT70
@@ -171,7 +171,14 @@ int startGame() {
 
                 runner.onFallingInPocket();
                 score++;
+                replaceRunner = true;
                 break;
+            }
+
+            // caught by chaser
+            if (Vector2d::diffOf(&runnerPosition, &chaserPosition).length() <= 60) {
+                chaser.onCatchingRunner();
+                return score;
             }
         }
     }
