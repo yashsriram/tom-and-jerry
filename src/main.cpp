@@ -155,11 +155,6 @@ int startGame() {
             runner.move();
             chaser.move(score);
 
-            if (runner.isAtRest() && chaser.isAtRest()) {
-                replaceRunner = false;
-                break;
-            }
-
             Vector2d runnerPosition = runner.getPosition();
             Vector2d chaserPosition = chaser.getPosition();
 
@@ -172,6 +167,11 @@ int startGame() {
                 runner.onFallingInPocket();
                 score++;
                 replaceRunner = true;
+                break;
+            }
+
+            if (runner.isAtRest() && chaser.isAtRest()) {
+                replaceRunner = false;
                 break;
             }
 
