@@ -1,6 +1,6 @@
 #include <simplecpp>
 #include <sstream>
-#include "../utils.cpp"
+#include "utils.cpp"
 
 // there is a small glicth
 
@@ -13,30 +13,28 @@ const Vector2d pocket4Position(790, 590);
 const Vector2d yesBtnPosition(100, 70);
 const Vector2d noBtnPosition(160, 70);
 
-int startGame() {
-    int score = 0;
+class Runner {
+    constexpr static double CIRCLE_RADIUS = 9;
+    constexpr static double AIM_LIMIT = 50;
+    constexpr static double AIM_SCALE = 0.2;
+    constexpr static double FRICTION_COEFFICIENT = 0.99;
+    Circle circle;
+    Vector2d ds;
+public:
+    Runner() = default;
 
-    Vector2d runnerPosition;
-    Vector2d chaserPosition(550, 350);
-    // single game
-    while (true) {
+    void place(double x, double y, double radius = CIRCLE_RADIUS) {
+        circle.reset(x, y, radius);
+        circle.setColor(COLOR(50, 50, 255)).setFill();
+        circle.show();
+    }
 
-        // place runner
-        while (true) {
-            Circle crefer(550, 350, 150);
-            crefer.setColor(COLOR(255, 0, 102));
-            Vector2d click;
-            registerClick(&click);
-            runnerPosition.set(&click);
-            if (Vector2d::diffOf(&runnerPosition, &centerOfBoard).length() <= 150) { break; }
-        }
-        Circle runner(runnerPosition.x, runnerPosition.y, 9);
-        runner.setColor(COLOR(50, 50, 255)).setFill();
-
-        // create aim circles
-        // direction and the speed are taken from aimPoint
+    Vector2d aim() {
         Vector2d aimPoint;
+        Vector2d aimVector;
+        Vector2d runnerPosition(circle.getX(), circle.getY());
         while (true) {
+            // create aim circles
             Circle c2(runnerPosition.x, runnerPosition.y, 50);
             c2.setColor(COLOR(255, 0, 0));
             Circle c3(runnerPosition.x, runnerPosition.y, 35);
@@ -44,51 +42,124 @@ int startGame() {
             Circle c4(runnerPosition.x, runnerPosition.y, 20);
             c4.setColor(COLOR(255, 200, 200));
             registerClick(&aimPoint);
-            if (Vector2d::diffOf(&runnerPosition, &aimPoint).length() <= 50) { break; }
+            aimVector = Vector2d::diffOf(&aimPoint, &runnerPosition);
+            if (aimVector.length() <= AIM_LIMIT) { break; }
         }
+        // direction and the speed are taken from aimVector
+        ds = aimVector.mulBy(AIM_SCALE);
+        return ds;
+    }
+
+    void bounceIfOnWall() {
+        double x = circle.getX();
+        double y = circle.getY();
+        if (x <= 300 || x >= 800) { ds.x = -ds.x; }
+        if (y <= 100 || y >= 600) { ds.y = -ds.y; }
+    }
+
+    void move() {
+        circle.move(ds.x, ds.y);
+        //friction control
+        ds.mulBy(FRICTION_COEFFICIENT);
+    }
+
+    bool isAtRest() {
+        return abs(ds.x) <= 0.1 && abs(ds.y) <= 0.1;
+    }
+
+    Vector2d getPosition() {
+        return {circle.getX(), circle.getY()};
+    }
+
+    void onFallingInPocket() {
+        circle.setColor(COLOR(0, 0, 0));
+        wait(0.1);
+        circle.hide();
+    }
+};
+
+class Chaser {
+    constexpr static double CIRCLE_RADIUS = 45;
+    constexpr static double FRICTION_COEFFICIENT = 0.98;
+    Circle circle;
+    Vector2d ds;
+public:
+    Chaser(double x, double y, double radius = CIRCLE_RADIUS) {
+        circle.reset(x, y, radius);
+        circle.setColor(COLOR(204, 102, 0)).setFill();
+    }
+
+    void setDs(const Vector2d ds) {
+        this->ds = ds;
+    }
+
+    void bounceIfOnWall() {
+        double x = circle.getX();
+        double y = circle.getY();
+        if (x <= 335 || x >= 765) { ds.x = -ds.x; }
+        if (y <= 135 || y >= 565) { ds.y = -ds.y; }
+    }
+
+    void move(double speedScale = 1) {
+        circle.move(ds.x * speedScale, ds.y * speedScale);
+        //friction control
+        ds.mulBy(FRICTION_COEFFICIENT);
+    }
+
+    bool isAtRest() {
+        return abs(ds.x) <= 0.1 && abs(ds.y) <= 0.1;
+    }
+
+    Vector2d getPosition() {
+        return {circle.getX(), circle.getY()};
+    }
+
+    void onCatchingRunner() {
+        circle.setColor(COLOR(255, 0, 0)).setFill();
+        wait(1);
+    }
+};
 
 
-        double dx = (aimPoint.x - runnerPosition.x) / 5;
-        double dy = (aimPoint.y - runnerPosition.y) / 5;
-        double dp = dx;
-        double dq = dy;//direction and speed taken care of by proportionality
+int startGame() {
+    int score = 0;
 
-        // chaser
-        Circle chaser(chaserPosition.x, chaserPosition.y, 45);
-        chaser.setColor(COLOR(204, 102, 0)).setFill();
+    Runner runner;
+    Chaser chaser(550, 350);
+    // single game
+    while (true) {
+        // place runner
+        Vector2d click;
+        while (true) {
+            Circle aimLimit(550, 350, 150);
+            aimLimit.setColor(COLOR(255, 0, 102));
+            registerClick(&click);
+            if (Vector2d::diffOf(&click, &centerOfBoard).length() <= 150) { break; }
+        }
+        runner.place(click.x, click.y);
+
+        Vector2d ds = runner.aim();
+        chaser.setDs(ds);
 
         while (true) {
             wait(0.01);
 
-            // bouncing off walls
-            if (chaserPosition.x <= 335 || chaserPosition.x >= 765) { dp = -dp; }
-            if (chaserPosition.y <= 135 || chaserPosition.y >= 565) { dq = -dq; }
-
-            if (runnerPosition.x <= 300 || runnerPosition.x >= 800) { dx = -dx; }
-            if (runnerPosition.y <= 100 || runnerPosition.y >= 600) { dy = -dy; }
+            // bounce if on wall
+            runner.bounceIfOnWall();
+            chaser.bounceIfOnWall();
 
             // movement
-            runner.move(dx, dy);
-            //friction control
-            dx = dx - dx / 100;
-            dy = dy - dy / 100;
-            if ((dx >= -0.1 && dx <= 0.1) && (dy >= -0.1 && dy <= 0.1)) { return score; }
+            runner.move();
+            chaser.move(score);
 
-            double Dp = score * dp, Dq = score * dq;
-            chaser.move(Dp, Dq);
-            //friction control
-            if ((dp <= -0.05 || dp >= 0.05) || (dq <= -0.05 || dq >= 0.05)) {
-                dp = dp - dp / 50;
-                dq = dq - dq / 50;
-            }
-            //co-ordinated data collection
-            runnerPosition.set(runner.getX(), runner.getY());
-            chaserPosition.set(chaser.getX(), chaser.getY());
+            if (runner.isAtRest() && chaser.isAtRest()) { return score; }
+
+            Vector2d runnerPosition = runner.getPosition();
+            Vector2d chaserPosition = chaser.getPosition();
 
             // caught by chaser
             if (Vector2d::diffOf(&runnerPosition, &chaserPosition).length() <= 60) {
-                chaser.setColor(COLOR(255, 0, 0)).setFill();
-                wait(1);
+                chaser.onCatchingRunner();
                 return score;
             }
 
@@ -99,8 +170,7 @@ int startGame() {
                 || Vector2d::diffOf(&runnerPosition, &pocket3Position).length() <= SQRT70
                 || Vector2d::diffOf(&runnerPosition, &pocket4Position).length() <= SQRT70) {
 
-                runner.setColor(COLOR(0, 0, 0));
-                wait(0.1);
+                runner.onFallingInPocket();
                 score++;
                 break;
             }

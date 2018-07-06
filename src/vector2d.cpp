@@ -21,6 +21,10 @@ struct Vector2d {
         return this->set(copy->x, copy->y);
     }
 
+    Vector2d mulBy(double num) {
+        return {x * num, y * num};
+    }
+
     static Vector2d diffOf(const Vector2d *a, const Vector2d *b) {
         Vector2d newVector2d;
         newVector2d.set(a->x - b->x, a->y - b->y);
