@@ -124,22 +124,19 @@ public:
 int startGame() {
     int score = 0;
 
-    bool replaceRunner = true;
     Runner runner;
     Chaser chaser(550, 350);
     // single game
     while (true) {
         // place runner
-        if (replaceRunner) {
-            Vector2d click;
-            while (true) {
-                Circle aimLimit(550, 350, 150);
-                aimLimit.setColor(COLOR(255, 0, 102));
-                registerClick(&click);
-                if (Vector2d::diffOf(&click, &centerOfBoard).length() <= 150) { break; }
-            }
-            runner.place(click.x, click.y);
+        Vector2d click;
+        while (true) {
+            Circle aimLimit(550, 350, 150);
+            aimLimit.setColor(COLOR(255, 0, 102));
+            registerClick(&click);
+            if (Vector2d::diffOf(&click, &centerOfBoard).length() <= 150) { break; }
         }
+        runner.place(click.x, click.y);
 
         Vector2d ds = runner.aim();
         chaser.setDs(ds);
@@ -166,13 +163,12 @@ int startGame() {
 
                 runner.onFallingInPocket();
                 score++;
-                replaceRunner = true;
                 break;
             }
 
+            // both at rest
             if (runner.isAtRest() && chaser.isAtRest()) {
-                replaceRunner = false;
-                break;
+                return score;
             }
 
             // caught by chaser
