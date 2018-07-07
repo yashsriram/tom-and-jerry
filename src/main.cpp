@@ -116,7 +116,6 @@ public:
 
     void onCatchingRunner() {
         circle.setColor(COLOR(255, 0, 0)).setFill();
-        wait(1);
     }
 };
 
@@ -131,6 +130,7 @@ int startGame() {
         // place runner
         Vector2d click;
         while (true) {
+            Text message(500, 30, "Place the runner!");
             Circle aimLimit(550, 350, 150);
             aimLimit.setColor(COLOR(255, 0, 102));
             registerClick(&click);
@@ -138,8 +138,11 @@ int startGame() {
         }
         runner.place(click.x, click.y);
 
-        Vector2d ds = runner.aim();
-        chaser.setDs(ds);
+        {
+            Text message(500, 30, "Strike the runner!");
+            Vector2d ds = runner.aim();
+            chaser.setDs(ds);
+        }
 
         while (true) {
             wait(0.01);
@@ -168,12 +171,16 @@ int startGame() {
 
             // both at rest
             if (runner.isAtRest() && chaser.isAtRest()) {
+                Text message(500, 30, "Alas! You are not in pocket!");
+                wait(1);
                 return score;
             }
 
             // caught by chaser
             if (Vector2d::diffOf(&runnerPosition, &chaserPosition).length() <= 60) {
                 chaser.onCatchingRunner();
+                Text message(500, 30, "Alas! Chaser caught you!");
+                wait(1);
                 return score;
             }
         }
