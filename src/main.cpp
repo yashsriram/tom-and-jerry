@@ -2,7 +2,6 @@
 #include <sstream>
 #include "utils.cpp"
 
-// there is a small glicth
 
 const Vector2d centerOfBoard(550, 350);
 const Vector2d pocket1Position(310, 110);
@@ -53,8 +52,10 @@ public:
     void bounceIfOnWall() {
         double x = circle.getX();
         double y = circle.getY();
-        if (x <= 300 || x >= 800) { ds.x = -ds.x; }
-        if (y <= 100 || y >= 600) { ds.y = -ds.y; }
+        if (x <= 300) { ds.x = abs(ds.x); }
+        else if (x >= 800) { ds.x = -abs(ds.x); }
+        if (y <= 100) { ds.y = abs(ds.y); }
+        else if (y >= 600) { ds.y = -abs(ds.y); }
     }
 
     void move() {
@@ -86,7 +87,7 @@ class Chaser {
 public:
     Chaser(double x, double y, double radius = CIRCLE_RADIUS) {
         circle.reset(x, y, radius);
-        circle.setColor(COLOR(204, 102, 0)).setFill();
+        circle.setColor(COLOR(0, 0, 0)).setFill();
     }
 
     void setDs(const Vector2d ds) {
@@ -96,8 +97,10 @@ public:
     void bounceIfOnWall() {
         double x = circle.getX();
         double y = circle.getY();
-        if (x <= 335 || x >= 765) { ds.x = -ds.x; }
-        if (y <= 135 || y >= 565) { ds.y = -ds.y; }
+        if (x <= 335) { ds.x = abs(ds.x); }
+        else if (x >= 765) { ds.x = -abs(ds.x); }
+        if (y <= 135) { ds.y = abs(ds.y); }
+        else if (y >= 565) { ds.y = -abs(ds.y); }
     }
 
     void move(double speedScale = 1) {
@@ -172,7 +175,7 @@ int startGame() {
             // both at rest
             if (runner.isAtRest() && chaser.isAtRest()) {
                 Text message(500, 30, "Alas! You are not in pocket!");
-                wait(1);
+                wait(2);
                 return score;
             }
 
@@ -180,7 +183,7 @@ int startGame() {
             if (Vector2d::diffOf(&runnerPosition, &chaserPosition).length() <= 60) {
                 chaser.onCatchingRunner();
                 Text message(500, 30, "Alas! Chaser caught you!");
-                wait(1);
+                wait(2);
                 return score;
             }
         }
