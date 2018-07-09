@@ -3,15 +3,15 @@
 #include "utils.cpp"
 
 
-const Vector2d centerOfBoard(550, 350);
-const Vector2d pocket1Position(310, 110);
-const Vector2d pocket2Position(790, 110);
-const Vector2d pocket3Position(310, 590);
-const Vector2d pocket4Position(790, 590);
+const Vector2d CENTER_OF_BOARD(550, 350);
+const Vector2d POCKET1_POSITION(310, 110);
+const Vector2d POCKET2_POSITION(790, 110);
+const Vector2d POCKET3_POSITION(310, 590);
+const Vector2d POCKET4_POSITION(790, 590);
 
-const Vector2d yesBtnPosition(100, 70);
-const Vector2d noBtnPosition(160, 70);
-const double SQRT70 = sqrt(70);
+const Vector2d YES_BTN_POSITION(100, 70);
+const Vector2d NO_BTN_POSITION(160, 70);
+const double IN_POCKET_DISTANCE = sqrt(70);
 
 class Runner {
     constexpr static double AIM_LIMIT = 50;
@@ -124,75 +124,82 @@ public:
     }
 };
 
-int startGame() {
-    int score = 0;
-    srand(time(NULL));
+class CarromChase {
+    constexpr static double PLACEMENT_LIMIT = 150;
+    constexpr static double PLACEMENT_LINEANCE = 10;
+public:
 
-    Runner runner;
-    Chaser chaser(550, 350);
-    // single game
-    while (true) {
-        // place runner
-        Vector2d currentChaserPosition = chaser.getPosition();
+    int startGame() {
+        int score = 0;
+        srand(time(NULL));
+
+        Runner runner;
+        Chaser chaser(CENTER_OF_BOARD.x, CENTER_OF_BOARD.y);
+        // single game
         while (true) {
-            double r = rand() % 150 + 1;
-            double theta = rand() % 360;
-            Vector2d newRunnerPosition(r * cosine(theta) + 550, r * sine(theta) + 350);
-            if (Vector2d::diffOf(&newRunnerPosition, &currentChaserPosition).length() >
-                Runner::CIRCLE_RADIUS + Chaser::CIRCLE_RADIUS + 10) {
-                runner.place(newRunnerPosition.x, newRunnerPosition.y);
-                break;
-            }
-        }
-
-        {
-            Text message(500, 30, "Strike the runner!");
-            Vector2d ds = runner.aim();
-            chaser.setDs(ds);
-        }
-
-        while (true) {
-            wait(0.01);
-
-            // bounce if on wall
-            runner.bounceIfOnWall();
-            chaser.bounceIfOnWall();
-
-            // movement
-            runner.move();
-            chaser.move(1 + score * 0.1);
-
-            Vector2d runnerPosition = runner.getPosition();
-            Vector2d chaserPosition = chaser.getPosition();
-
-            // in pocket
-            if (Vector2d::diffOf(&runnerPosition, &pocket1Position).length() <= SQRT70
-                || Vector2d::diffOf(&runnerPosition, &pocket2Position).length() <= SQRT70
-                || Vector2d::diffOf(&runnerPosition, &pocket3Position).length() <= SQRT70
-                || Vector2d::diffOf(&runnerPosition, &pocket4Position).length() <= SQRT70) {
-
-                runner.onFallingInPocket();
-                score++;
-                break;
+            // place runner
+            Vector2d currentChaserPosition = chaser.getPosition();
+            while (true) {
+                double r = rand() % (int) PLACEMENT_LIMIT + 1;
+                double theta = rand() % 360;
+                Vector2d newRunnerPosition(r * cosine(theta) + CENTER_OF_BOARD.x, r * sine(theta) + CENTER_OF_BOARD.y);
+                if (Vector2d::diffOf(&newRunnerPosition, &currentChaserPosition).length() >
+                    Runner::CIRCLE_RADIUS + Chaser::CIRCLE_RADIUS + PLACEMENT_LINEANCE) {
+                    runner.place(newRunnerPosition.x, newRunnerPosition.y);
+                    break;
+                }
             }
 
-            // both at rest
-            if (runner.isAtRest() && chaser.isAtRest()) {
-                Text message(500, 30, "Alas! You are not in pocket!");
-                wait(1.5);
-                return score;
+            {
+                Text message(500, 30, "Strike the runner!");
+                Vector2d ds = runner.aim();
+                chaser.setDs(ds);
             }
 
-            // caught by chaser
-            if (Vector2d::diffOf(&runnerPosition, &chaserPosition).length() <= 60) {
-                chaser.onCatchingRunner();
-                Text message(500, 30, "Alas! Chaser caught you!");
-                wait(1.5);
-                return score;
+            while (true) {
+                wait(0.01);
+
+                // bounce if on wall
+                runner.bounceIfOnWall();
+                chaser.bounceIfOnWall();
+
+                // movement
+                runner.move();
+                chaser.move(1 + score * 0.1);
+
+                Vector2d runnerPosition = runner.getPosition();
+                Vector2d chaserPosition = chaser.getPosition();
+
+                // in pocket
+                if (Vector2d::diffOf(&runnerPosition, &POCKET1_POSITION).length() <= IN_POCKET_DISTANCE
+                    || Vector2d::diffOf(&runnerPosition, &POCKET2_POSITION).length() <= IN_POCKET_DISTANCE
+                    || Vector2d::diffOf(&runnerPosition, &POCKET3_POSITION).length() <= IN_POCKET_DISTANCE
+                    || Vector2d::diffOf(&runnerPosition, &POCKET4_POSITION).length() <= IN_POCKET_DISTANCE) {
+
+                    runner.onFallingInPocket();
+                    score++;
+                    break;
+                }
+
+                // both at rest
+                if (runner.isAtRest() && chaser.isAtRest()) {
+                    Text message(500, 30, "Alas! You are not in pocket!");
+                    wait(1.5);
+                    return score;
+                }
+
+                // caught by chaser
+                if (Vector2d::diffOf(&runnerPosition, &chaserPosition).length() <= 60) {
+                    chaser.onCatchingRunner();
+                    Text message(500, 30, "Alas! Chaser caught you!");
+                    wait(1.5);
+                    return score;
+                }
             }
         }
     }
-}
+};
+
 
 int main() {
     initCanvas("Carrom Chase", 1100, 700);
@@ -333,26 +340,28 @@ int main() {
     Line s3(550 - 70, 350 + 70, 430 - 100, 470 + 100);
     Line s4(550 + 70, 350 + 70, 670 + 100, 470 + 100);
 
+    CarromChase carromChase;
+
     while (true) {
-        int score = startGame();
+        int score = carromChase.startGame();
 
         // output score and ask for another game
         ostringstream oss;
         oss << "Your score is = " << score << ". " << "Do you want to play another game?";
         Text message(500, 30, oss.str());
         // yes no buttons
-        Circle yesBtn(yesBtnPosition.x, yesBtnPosition.y, 30);
+        Circle yesBtn(YES_BTN_POSITION.x, YES_BTN_POSITION.y, 30);
         yesBtn.setColor(COLOR(0, 255, 0)).setFill();
-        Text yesBtnText(yesBtnPosition.x, yesBtnPosition.y, "Yes");
-        Circle noBtn(noBtnPosition.x, noBtnPosition.y, 30);
+        Text yesBtnText(YES_BTN_POSITION.x, YES_BTN_POSITION.y, "Yes");
+        Circle noBtn(NO_BTN_POSITION.x, NO_BTN_POSITION.y, 30);
         noBtn.setColor(COLOR(255, 0, 0)).setFill();
-        Text noBtnText(noBtnPosition.x, noBtnPosition.y, "No");
+        Text noBtnText(NO_BTN_POSITION.x, NO_BTN_POSITION.y, "No");
 
         while (true) {
             Vector2d click;
             registerClick(&click);
-            if (Vector2d::diffOf(&click, &yesBtnPosition).length() <= 20) { break; }
-            if (Vector2d::diffOf(&click, &noBtnPosition).length() <= 20) { return 0; }
+            if (Vector2d::diffOf(&click, &YES_BTN_POSITION).length() <= 20) { break; }
+            if (Vector2d::diffOf(&click, &NO_BTN_POSITION).length() <= 20) { return 0; }
         }
     }
 }
