@@ -14,17 +14,18 @@ const Vector2d noBtnPosition(160, 70);
 const double SQRT70 = sqrt(70);
 
 class Runner {
-    constexpr static double CIRCLE_RADIUS = 9;
     constexpr static double AIM_LIMIT = 50;
     constexpr static double AIM_SCALE = 0.2;
     constexpr static double FRICTION_COEFFICIENT = 0.99;
     Circle circle;
     Vector2d ds;
 public:
+    constexpr static double CIRCLE_RADIUS = 9;
+
     Runner() = default;
 
-    void place(double x, double y, double radius = CIRCLE_RADIUS) {
-        circle.reset(x, y, radius);
+    void place(double x, double y) {
+        circle.reset(x, y, CIRCLE_RADIUS);
         circle.setColor(COLOR(50, 50, 255)).setFill();
         circle.show();
     }
@@ -80,13 +81,14 @@ public:
 };
 
 class Chaser {
-    constexpr static double CIRCLE_RADIUS = 45;
     constexpr static double FRICTION_COEFFICIENT = 0.98;
     Circle circle;
     Vector2d ds;
 public:
-    Chaser(double x, double y, double radius = CIRCLE_RADIUS) {
-        circle.reset(x, y, radius);
+    constexpr static double CIRCLE_RADIUS = 45;
+
+    Chaser(double x, double y) {
+        circle.reset(x, y, CIRCLE_RADIUS);
         circle.setColor(COLOR(0, 0, 0)).setFill();
     }
 
@@ -122,24 +124,26 @@ public:
     }
 };
 
-
 int startGame() {
     int score = 0;
+    srand(time(NULL));
 
     Runner runner;
     Chaser chaser(550, 350);
     // single game
     while (true) {
         // place runner
-        Vector2d click;
+        Vector2d currentChaserPosition = chaser.getPosition();
         while (true) {
-            Text message(500, 30, "Place the runner!");
-            Circle aimLimit(550, 350, 150);
-            aimLimit.setColor(COLOR(255, 0, 102));
-            registerClick(&click);
-            if (Vector2d::diffOf(&click, &centerOfBoard).length() <= 150) { break; }
+            double r = rand() % 150 + 1;
+            double theta = rand() % 360;
+            Vector2d newRunnerPosition(r * cosine(theta) + 550, r * sine(theta) + 350);
+            if (Vector2d::diffOf(&newRunnerPosition, &currentChaserPosition).length() >
+                Runner::CIRCLE_RADIUS + Chaser::CIRCLE_RADIUS + 10) {
+                runner.place(newRunnerPosition.x, newRunnerPosition.y);
+                break;
+            }
         }
-        runner.place(click.x, click.y);
 
         {
             Text message(500, 30, "Strike the runner!");
@@ -156,7 +160,7 @@ int startGame() {
 
             // movement
             runner.move();
-            chaser.move(1 + score * 0.14);
+            chaser.move(1 + score * 0.1);
 
             Vector2d runnerPosition = runner.getPosition();
             Vector2d chaserPosition = chaser.getPosition();
@@ -175,7 +179,7 @@ int startGame() {
             // both at rest
             if (runner.isAtRest() && chaser.isAtRest()) {
                 Text message(500, 30, "Alas! You are not in pocket!");
-                wait(2);
+                wait(1.5);
                 return score;
             }
 
@@ -183,7 +187,7 @@ int startGame() {
             if (Vector2d::diffOf(&runnerPosition, &chaserPosition).length() <= 60) {
                 chaser.onCatchingRunner();
                 Text message(500, 30, "Alas! Chaser caught you!");
-                wait(2);
+                wait(1.5);
                 return score;
             }
         }
