@@ -6,8 +6,10 @@
 * Install dependencies
     * `sudo apt-get install libx11-6 libx11-dev`
 * Open terminal in this directory
+    * `mkdir build && cd build`
+    * `cmake ..`
     * `make` to compile code [creates an executable **carromchase**]
-    * `make play` or `./carromchase` to start playing
+    * `./carromchase` to start playing
 
 ## How to play?
 * The game is on a carrom board
