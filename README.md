@@ -13,8 +13,8 @@
     * `./carromchase` to start playing
 
 ## How to play?
-* The game is on a carrom board
-* But unlike the classic game, there are just two carroms, one runner & one chaser
+* The game is played on a carrom board
+* But unlike the classic carroms game, there are just two carroms, one runner & one chaser
 * The runner is placed for you and you can strike it
     * For striking, a few aiming circles are provided
     * A click inside the circles directs it
