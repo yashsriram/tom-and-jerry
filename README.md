@@ -6,7 +6,7 @@
 ## code
 - The code is written in `C++`.
 - All the src is written in `src/`.
-- [simplecpp](https://www.cse.iitb.ac.in/~ranade/simplecpp/) is used for rendering.
+- [Simplecpp](https://www.cse.iitb.ac.in/~ranade/simplecpp/) is used for rendering.
 - `include` & `lib` contains headers and implementation of simplecpp.
 
 ## documentation

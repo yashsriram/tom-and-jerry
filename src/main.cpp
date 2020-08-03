@@ -9,8 +9,8 @@ const Vector2d POCKET2_POSITION(790, 110);
 const Vector2d POCKET3_POSITION(310, 590);
 const Vector2d POCKET4_POSITION(790, 590);
 
-const Vector2d YES_BTN_POSITION(100, 70);
-const Vector2d NO_BTN_POSITION(160, 70);
+const Vector2d YES_BTN_POSITION(500, 740);
+const Vector2d NO_BTN_POSITION(600, 740);
 const double IN_POCKET_DISTANCE = sqrt(70);
 
 class Runner {
@@ -151,7 +151,7 @@ public:
             }
 
             {
-                Text message(500, 30, "Help little Jerry get to a hole safely.");
+                Text message(550, 30, "Help little Jerry get to a hole safely.");
                 Vector2d ds = runner.aim();
                 chaser.setDs(ds);
             }
@@ -183,7 +183,7 @@ public:
 
                 // both at rest
                 if (runner.isAtRest() && chaser.isAtRest()) {
-                    Text message(500, 30, "Alas! Jerry has not escaped!");
+                    Text message(550, 30, "Alas! Jerry has not escaped!");
                     wait(1.5);
                     return score;
                 }
@@ -191,7 +191,7 @@ public:
                 // caught by chaser
                 if (Vector2d::diffOf(&runnerPosition, &chaserPosition).length() <= 60) {
                     chaser.onCatchingRunner();
-                    Text message(500, 30, "Alas! Tom caught Jerry!");
+                    Text message(550, 30, "Alas! Tom caught Jerry!");
                     wait(1.5);
                     return score;
                 }
@@ -202,7 +202,7 @@ public:
 
 
 int main() {
-    initCanvas("Tom and Jerry", 1100, 700);
+    initCanvas("Tom and Jerry", 1100, 800);
     // board
     Rectangle r2(550, 350, 570, 570);
     r2.setColor(COLOR(153, 76, 0)).setFill();
@@ -214,10 +214,10 @@ int main() {
     Rectangle r4(550, 555, 350, 20);
     Rectangle r5(345, 350, 20, 350);
     Rectangle r6(755, 350, 20, 350);
-    Line l1(375, 134, 725, 134);
-    Line l2(375, 566, 725, 566);
-    Line l3(334, 175, 334, 525);
-    Line l4(766, 175, 766, 525);
+    /* Line l1(375, 134, 725, 134); */
+    /* Line l2(375, 566, 725, 566); */
+    /* Line l3(334, 175, 334, 525); */
+    /* Line l4(766, 175, 766, 525); */
 
     // pockets
     Circle c5(790, 110, 15);
@@ -243,102 +243,102 @@ int main() {
     Circle conn4(360, 160, 15 * 1 / sqrt(2));
 
     // red dots
-    Circle ca1(345, 175, 11);
-    ca1.setFill();
-    Circle ca10(345, 175, 7);
-    ca10.setColor(COLOR(255, 0, 0)).setFill();
+    /* Circle ca1(345, 175, 11); */
+    /* ca1.setFill(); */
+    /* Circle ca10(345, 175, 7); */
+    /* ca10.setColor(COLOR(255, 0, 0)).setFill(); */
 
-    Circle ca2(345, 525, 11);
-    ca2.setFill();
-    Circle ca20(345, 525, 7);
-    ca20.setColor(COLOR(255, 0, 0)).setFill();
+    /* Circle ca2(345, 525, 11); */
+    /* ca2.setFill(); */
+    /* Circle ca20(345, 525, 7); */
+    /* ca20.setColor(COLOR(255, 0, 0)).setFill(); */
 
-    Circle ca3(755, 175, 11);
-    ca3.setFill();
-    Circle ca30(755, 175, 7);
-    ca30.setColor(COLOR(255, 0, 0)).setFill();
+    /* Circle ca3(755, 175, 11); */
+    /* ca3.setFill(); */
+    /* Circle ca30(755, 175, 7); */
+    /* ca30.setColor(COLOR(255, 0, 0)).setFill(); */
 
-    Circle ca4(755, 525, 11);
-    ca4.setFill();
-    Circle ca40(755, 525, 7);
-    ca40.setColor(COLOR(255, 0, 0)).setFill();
+    /* Circle ca4(755, 525, 11); */
+    /* ca4.setFill(); */
+    /* Circle ca40(755, 525, 7); */
+    /* ca40.setColor(COLOR(255, 0, 0)).setFill(); */
 
-    Circle ca5(375, 145, 11);
-    ca5.setFill();
-    Circle ca50(375, 145, 7);
-    ca50.setColor(COLOR(255, 0, 0)).setFill();
+    /* Circle ca5(375, 145, 11); */
+    /* ca5.setFill(); */
+    /* Circle ca50(375, 145, 7); */
+    /* ca50.setColor(COLOR(255, 0, 0)).setFill(); */
 
-    Circle ca6(725, 145, 11);
-    ca6.setFill();
-    Circle ca60(725, 145, 7);
-    ca60.setColor(COLOR(255, 0, 0)).setFill();
+    /* Circle ca6(725, 145, 11); */
+    /* ca6.setFill(); */
+    /* Circle ca60(725, 145, 7); */
+    /* ca60.setColor(COLOR(255, 0, 0)).setFill(); */
 
-    Circle ca7(375, 555, 11);
-    ca7.setFill();
-    Circle ca70(375, 555, 7);
-    ca70.setColor(COLOR(255, 0, 0)).setFill();
+    /* Circle ca7(375, 555, 11); */
+    /* ca7.setFill(); */
+    /* Circle ca70(375, 555, 7); */
+    /* ca70.setColor(COLOR(255, 0, 0)).setFill(); */
 
-    Circle ca8(725, 555, 11);
-    ca8.setFill();
-    Circle ca80(725, 555, 7);
-    ca80.setColor(COLOR(255, 0, 0)).setFill();
+    /* Circle ca8(725, 555, 11); */
+    /* ca8.setFill(); */
+    /* Circle ca80(725, 555, 7); */
+    /* ca80.setColor(COLOR(255, 0, 0)).setFill(); */
 
     // mid circles
-    Circle couter_mid_circle(550, 350, 75);
+    /* Circle couter_mid_circle(550, 350, 75); */
 
-    Circle cinnerred(550, 350, 70);
-    cinnerred.setColor(COLOR(255, 0, 0));
-    cinnerred.setFill();
+    /* Circle cinnerred(550, 350, 70); */
+    /* cinnerred.setColor(COLOR(255, 0, 0)); */
+    /* cinnerred.setFill(); */
 
-    Circle cinnercream(550, 350, 60);
-    cinnercream.setColor(COLOR(255, 255, 153));
-    cinnercream.setFill();
+    /* Circle cinnercream(550, 350, 60); */
+    /* cinnercream.setColor(COLOR(255, 255, 153)); */
+    /* cinnercream.setFill(); */
 
     // spikes
-    Line k1(550, 300, 550, 400);
-    Line k2(500, 350, 600, 350);
-    Line k3(550 - 50 / sqrt(2), 350 - 50 / sqrt(2), 550 + 50 / sqrt(2), 350 + 50 / sqrt(2));
-    Line k4(550 + 50 / sqrt(2), 350 - 50 / sqrt(2), 550 - 50 / sqrt(2), 350 + 50 / sqrt(2));
+    /* Line k1(550, 300, 550, 400); */
+    /* Line k2(500, 350, 600, 350); */
+    /* Line k3(550 - 50 / sqrt(2), 350 - 50 / sqrt(2), 550 + 50 / sqrt(2), 350 + 50 / sqrt(2)); */
+    /* Line k4(550 + 50 / sqrt(2), 350 - 50 / sqrt(2), 550 - 50 / sqrt(2), 350 + 50 / sqrt(2)); */
 
     // spike side
-    Line k001(550 - 50, 350, 550 + 14 * cos(7 * PI / 8), 350 + 14 * sin(7 * PI / 8));
-    Line k002(550 - 50, 350, 550 + 14 * cos(9 * PI / 8), 350 + 14 * sin(9 * PI / 8));
+    /* Line k001(550 - 50, 350, 550 + 14 * cos(7 * PI / 8), 350 + 14 * sin(7 * PI / 8)); */
+    /* Line k002(550 - 50, 350, 550 + 14 * cos(9 * PI / 8), 350 + 14 * sin(9 * PI / 8)); */
 
-    Line k003(550 - 50 / sqrt(2), 350 - 50 / sqrt(2), 550 + 14 * cos(9 * PI / 8), 350 + 14 * sin(9 * PI / 8));
-    Line k004(550 - 50 / sqrt(2), 350 - 50 / sqrt(2), 550 + 14 * cos(11 * PI / 8), 350 + 14 * sin(11 * PI / 8));
+    /* Line k003(550 - 50 / sqrt(2), 350 - 50 / sqrt(2), 550 + 14 * cos(9 * PI / 8), 350 + 14 * sin(9 * PI / 8)); */
+    /* Line k004(550 - 50 / sqrt(2), 350 - 50 / sqrt(2), 550 + 14 * cos(11 * PI / 8), 350 + 14 * sin(11 * PI / 8)); */
 
-    Line k005(550, 350 - 50, 550 + 14 * cos(11 * PI / 8), 350 + 14 * sin(11 * PI / 8));
-    Line k006(550, 350 - 50, 550 + 14 * cos(13 * PI / 8), 350 + 14 * sin(13 * PI / 8));
+    /* Line k005(550, 350 - 50, 550 + 14 * cos(11 * PI / 8), 350 + 14 * sin(11 * PI / 8)); */
+    /* Line k006(550, 350 - 50, 550 + 14 * cos(13 * PI / 8), 350 + 14 * sin(13 * PI / 8)); */
 
-    Line k007(550 + 50 / sqrt(2), 350 - 50 / sqrt(2), 550 + 14 * cos(13 * PI / 8), 350 + 14 * sin(13 * PI / 8));
-    Line k008(550 + 50 / sqrt(2), 350 - 50 / sqrt(2), 550 + 14 * cos(15 * PI / 8), 350 + 14 * sin(15 * PI / 8));
+    /* Line k007(550 + 50 / sqrt(2), 350 - 50 / sqrt(2), 550 + 14 * cos(13 * PI / 8), 350 + 14 * sin(13 * PI / 8)); */
+    /* Line k008(550 + 50 / sqrt(2), 350 - 50 / sqrt(2), 550 + 14 * cos(15 * PI / 8), 350 + 14 * sin(15 * PI / 8)); */
 
-    Line k009(550 + 50, 350, 550 + 14 * cos(15 * PI / 8), 350 + 14 * sin(15 * PI / 8));
-    Line k010(550 + 50, 350, 550 + 14 * cos(PI / 8), 350 + 14 * sin(PI / 8));
+    /* Line k009(550 + 50, 350, 550 + 14 * cos(15 * PI / 8), 350 + 14 * sin(15 * PI / 8)); */
+    /* Line k010(550 + 50, 350, 550 + 14 * cos(PI / 8), 350 + 14 * sin(PI / 8)); */
 
-    Line k011(550 + 50 / sqrt(2), 350 + 50 / sqrt(2), 550 + 14 * cos(PI / 8), 350 + 14 * sin(PI / 8));
-    Line k012(550 + 50 / sqrt(2), 350 + 50 / sqrt(2), 550 + 14 * cos(3 * PI / 8), 350 + 14 * sin(3 * PI / 8));
+    /* Line k011(550 + 50 / sqrt(2), 350 + 50 / sqrt(2), 550 + 14 * cos(PI / 8), 350 + 14 * sin(PI / 8)); */
+    /* Line k012(550 + 50 / sqrt(2), 350 + 50 / sqrt(2), 550 + 14 * cos(3 * PI / 8), 350 + 14 * sin(3 * PI / 8)); */
 
-    Line k013(550, 350 + 50, 550 + 14 * cos(3 * PI / 8), 350 + 14 * sin(3 * PI / 8));
-    Line k014(550, 350 + 50, 550 + 14 * cos(5 * PI / 8), 350 + 14 * sin(5 * PI / 8));
+    /* Line k013(550, 350 + 50, 550 + 14 * cos(3 * PI / 8), 350 + 14 * sin(3 * PI / 8)); */
+    /* Line k014(550, 350 + 50, 550 + 14 * cos(5 * PI / 8), 350 + 14 * sin(5 * PI / 8)); */
 
-    Line k015(550 - 50 / sqrt(2), 350 + 50 / sqrt(2), 550 + 14 * cos(5 * PI / 8), 350 + 14 * sin(5 * PI / 8));
-    Line k016(550 - 50 / sqrt(2), 350 + 50 / sqrt(2), 550 + 14 * cos(7 * PI / 8), 350 + 14 * sin(7 * PI / 8));
+    /* Line k015(550 - 50 / sqrt(2), 350 + 50 / sqrt(2), 550 + 14 * cos(5 * PI / 8), 350 + 14 * sin(5 * PI / 8)); */
+    /* Line k016(550 - 50 / sqrt(2), 350 + 50 / sqrt(2), 550 + 14 * cos(7 * PI / 8), 350 + 14 * sin(7 * PI / 8)); */
 
     // central circles
-    Circle cenblack_outline(550, 350, 10);
-    Circle cen_outer_black(550, 350, 14);
-    Circle cenred(550, 350, 9);
-    cenred.setColor(COLOR(255, 0, 0)).setFill();
+    /* Circle cenblack_outline(550, 350, 10); */
+    /* Circle cen_outer_black(550, 350, 14); */
+    /* Circle cenred(550, 350, 9); */
+    /* cenred.setColor(COLOR(255, 0, 0)).setFill(); */
 
-    Circle cblack_outline2(550, 350, 70);
-    Circle cblack_outline3(550, 350, 60);
+    /* Circle cblack_outline2(550, 350, 70); */
+    /* Circle cblack_outline3(550, 350, 60); */
 
     // sidelines
-    Line s1(550 + 70, 350 - 70, 670 + 100, 230 - 100);
-    Line s2(550 - 70, 350 - 70, 430 - 100, 230 - 100);
-    Line s3(550 - 70, 350 + 70, 430 - 100, 470 + 100);
-    Line s4(550 + 70, 350 + 70, 670 + 100, 470 + 100);
+    /* Line s1(550 + 70, 350 - 70, 670 + 100, 230 - 100); */
+    /* Line s2(550 - 70, 350 - 70, 430 - 100, 230 - 100); */
+    /* Line s3(550 - 70, 350 + 70, 430 - 100, 470 + 100); */
+    /* Line s4(550 + 70, 350 + 70, 670 + 100, 470 + 100); */
 
     CarromChase carromChase;
 
@@ -348,7 +348,7 @@ int main() {
         // output score and ask for another game
         ostringstream oss;
         oss << "Your score is = " << score << ". " << "Do you want to play another game?";
-        Text message(500, 30, oss.str());
+        Text message(550, 680, oss.str());
         // yes no buttons
         Circle yesBtn(YES_BTN_POSITION.x, YES_BTN_POSITION.y, 30);
         yesBtn.setColor(COLOR(0, 255, 0)).setFill();
