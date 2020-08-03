@@ -14,16 +14,15 @@
 
 ## usage
 
-### how to compile?
-- Make sure X11 and X11-dev are installed.
-    - For ubutnu `apt install libx11-6 libx11-dev`.
+### how to run? [linux]
+- Make sure x11 and x11-dev are installed.
 - Open terminal in the root directory.
     - Make a build directory using `mkdir build && cd build`.
     - Create a makefile using `cmake ..`
     - Compile code using `make`. This creates an executable named `tomandjerry`.
     - Use `./tomandjerry` to start playing.
 
-### how to play?
+### rules
 - The game is played on a board.
 - There are two agents, Tom (the adversery) & Jerry (the player).
 - Tom is the big mean circle and Jerry is small witty circle.
