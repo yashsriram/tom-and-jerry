@@ -18,8 +18,8 @@
 - Make sure X11 and X11-dev are installed.
     - For ubutnu `apt install libx11-6 libx11-dev`.
 - Open terminal in the root directory.
-    - Make a build directory `mkdir build && cd build`.
-    - Create a makefile `cmake ..`.
+    - Make a build directory using `mkdir build && cd build`.
+    - Create a makefile using `cmake ..`
     - Compile code using `make`. This creates an executable named `tomandjerry`.
     - Use `./tomandjerry` to start playing.
 
