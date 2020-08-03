@@ -26,7 +26,7 @@ public:
 
     void place(double x, double y) {
         circle.reset(x, y, CIRCLE_RADIUS);
-        circle.setColor(COLOR(50, 50, 255)).setFill();
+        circle.setColor(COLOR(200, 50, 0)).setFill();
         circle.show();
     }
 
@@ -89,7 +89,7 @@ public:
 
     Chaser(double x, double y) {
         circle.reset(x, y, CIRCLE_RADIUS);
-        circle.setColor(COLOR(0, 0, 0)).setFill();
+        circle.setColor(COLOR(50, 50, 200)).setFill();
     }
 
     void setDs(const Vector2d ds) {

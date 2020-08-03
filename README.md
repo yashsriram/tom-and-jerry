@@ -14,7 +14,7 @@
 
 ## usage
 
-### how to install?
+### how to compile?
 - Make sure X11 and X11-dev are installed.
     - For ubutnu `apt install libx11-6 libx11-dev`.
 - Open terminal in the root directory.
