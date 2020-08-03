@@ -41,6 +41,11 @@
 - If Tom and Jerry stop on the board without Jerry reaching one of the holes safely, the game ends!
 - Help Jerry escape, score and repeat!
 
+## demonstration
+The following GIF illustrates the gameplay.
+
+![](./github/gameplay.gif)
+
 ## roadmap
 - [x] Basic game.
 - [ ] Refactor literal constants to const variables
