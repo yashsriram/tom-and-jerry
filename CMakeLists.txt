@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # Project
-project(CarromChase)
+project(TomAndJerry)
 
 # Flags
 set(CMAKE_CXX_STANDARD 11)
@@ -15,10 +15,10 @@ set(SOURCES src/main.cpp)
 include_directories(include)
 
 # Library
-add_executable(carromchase ${SOURCES})
+add_executable(tomandjerry ${SOURCES})
 
 # Link library
 find_library(LIB_SIMPLE_CPP sprite HINT lib/)
 find_library(LIB_X11 X11)
 
-target_link_libraries(carromchase ${LIB_SIMPLE_CPP} ${LIB_X11})
+target_link_libraries(tomandjerry ${LIB_SIMPLE_CPP} ${LIB_X11})

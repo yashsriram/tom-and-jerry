@@ -1,7 +1,7 @@
 # tom-and-jerry
 
 ## description
-- Tom and Jerry is a very simple cat and mouse game.
+- Tom and Jerry is a simple cat and mouse game.
 
 ## code
 - The code is written in `C++`.

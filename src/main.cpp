@@ -151,7 +151,7 @@ public:
             }
 
             {
-                Text message(500, 30, "Strike the runner!");
+                Text message(500, 30, "Help little Jerry get to a hole safely.");
                 Vector2d ds = runner.aim();
                 chaser.setDs(ds);
             }
@@ -183,7 +183,7 @@ public:
 
                 // both at rest
                 if (runner.isAtRest() && chaser.isAtRest()) {
-                    Text message(500, 30, "Alas! You are not in pocket!");
+                    Text message(500, 30, "Alas! Jerry has not escaped!");
                     wait(1.5);
                     return score;
                 }
@@ -191,7 +191,7 @@ public:
                 // caught by chaser
                 if (Vector2d::diffOf(&runnerPosition, &chaserPosition).length() <= 60) {
                     chaser.onCatchingRunner();
-                    Text message(500, 30, "Alas! Chaser caught you!");
+                    Text message(500, 30, "Alas! Tom caught Jerry!");
                     wait(1.5);
                     return score;
                 }
@@ -202,7 +202,7 @@ public:
 
 
 int main() {
-    initCanvas("Carrom Chase", 1100, 700);
+    initCanvas("Tom and Jerry", 1100, 700);
     // board
     Rectangle r2(550, 350, 570, 570);
     r2.setColor(COLOR(153, 76, 0)).setFill();
