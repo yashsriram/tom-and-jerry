@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tom and Jerry</title>
+    <link rel="icon" type="image/x-icon" href="logo.png">
+    <style>
+      canvas {
+        background: linear-gradient(
+          135deg,
+          white 0%,
+          white 49%,
+          black 49%,
+          black 51%,
+          white 51%,
+          white 100%
+        );
+        background-repeat: repeat;
+        background-size: 20px 20px;
+      }
+      body, html { height:100%; }
+      * { margin: 0; padding: 0;}
+      canvas {
+       position:absolute;
+       width:100%;
+       height:100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="interactive"></canvas>
+    <script type="module">
+        import init from './wasm-bindgen/tom-and-jerry.js'
+        init()
+    </script>
+  </body>
+</html>
