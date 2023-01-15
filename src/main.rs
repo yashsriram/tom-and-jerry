@@ -10,8 +10,8 @@ use bevy::{
 
 const ROOM_OUTER_COLOR: Color = Color::rgb(153. / 255., 76. / 255., 0. / 255.);
 const ROOM_INNER_COLOR: Color = Color::rgb(255. / 255., 255. / 255., 153. / 255.);
-const ROOM_SIDE_LEN: f32 = 450.;
 const ROOM_PADDING: f32 = 50.;
+const POCKET_RADIUS: f32 = 20.;
 const PLACEMENT_LIMIT: f32 = 150.;
 const PLACEMENT_LINEANCE: f32 = 10.;
 
@@ -61,10 +61,8 @@ impl From<&Jerry> for Mesh {
     }
 }
 
-struct Pockets {
-    centers: Vec<Vec3>,
-    radius: f32,
-}
+#[derive(Component)]
+pub struct RoomMarker;
 
 struct Game {
     score: usize,
@@ -80,13 +78,11 @@ fn main() {
         });
     }
     app.insert_resource(WindowDescriptor {
-        width: 700.,
-        height: 500.,
         canvas: Some("#interactive".to_string()),
         fit_canvas_to_parent: true,
         ..default()
     })
-    .insert_resource(ClearColor(Color::BLACK))
+    .insert_resource(ClearColor(ROOM_OUTER_COLOR))
     .insert_resource(Tom {
         radius: 45.,
         ds: Vec3::ZERO,
@@ -108,40 +104,49 @@ fn init(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
+    mut windows: ResMut<Windows>,
     tom: Res<Tom>,
     jerry: Res<Jerry>,
 ) {
+    let window = windows.primary_mut();
+    let physical_window_dims = Vec2::new(
+        window.physical_width() as f32,
+        window.physical_height() as f32,
+    );
+    let scale_factor = window.scale_factor() as f32;
+    let window_dims = physical_window_dims / scale_factor;
     // Camera
     commands.spawn_bundle(Camera2dBundle::default());
     // Room
-    commands.spawn_bundle(MaterialMesh2dBundle {
-        mesh: meshes
-            .add(Mesh::from(Quad::new(Vec2::new(
-                ROOM_SIDE_LEN + ROOM_PADDING,
-                ROOM_SIDE_LEN + ROOM_PADDING,
-            ))))
-            .into(),
-        material: materials.add(ROOM_OUTER_COLOR.into()),
-        ..default()
-    });
-    commands.spawn_bundle(MaterialMesh2dBundle {
-        mesh: meshes
-            .add(Mesh::from(Quad::new(Vec2::new(
-                ROOM_SIDE_LEN,
-                ROOM_SIDE_LEN,
-            ))))
-            .into(),
-        material: materials.add(ROOM_INNER_COLOR.into()),
-        ..default()
-    });
+    let padded_window_dims = window_dims - Vec2::new(ROOM_PADDING, ROOM_PADDING);
+    commands
+        .spawn_bundle(MaterialMesh2dBundle {
+            mesh: meshes.add(Mesh::from(Quad::new(Vec2::ONE))).into(),
+            material: materials.add(ROOM_INNER_COLOR.into()),
+            transform: Transform::default().with_scale(Vec3::new(
+                padded_window_dims.x,
+                padded_window_dims.y,
+                1.,
+            )),
+            ..default()
+        })
+        .insert(RoomMarker);
+    // Pockets
     commands.spawn_bundle(MaterialMesh2dBundle {
         mesh: meshes
             .add(Mesh::from(Circle {
-                radius: 10.,
+                radius: 1.0,
                 vertices: 64,
             }))
             .into(),
         material: materials.add(Color::BLACK.into()),
+        transform: Transform::default()
+            .with_scale(Vec3::new(POCKET_RADIUS, POCKET_RADIUS, 1.0))
+            .with_translation(Vec3::new(
+                window_dims.x / 2. - POCKET_RADIUS - ROOM_PADDING,
+                window_dims.y / 2. - POCKET_RADIUS - ROOM_PADDING,
+                1.0,
+            )),
         ..default()
     });
     // Tom
@@ -149,7 +154,7 @@ fn init(
         .spawn_bundle(MaterialMesh2dBundle {
             mesh: meshes.add(Mesh::from(&*tom)).into(),
             material: materials.add(Tom::COLOR.into()),
-            transform: Transform::default().with_translation(Vec3::Z),
+            transform: Transform::default().with_translation(Vec3::new(50., 50., 2.)),
             ..default()
         })
         .insert(TomMarker);
@@ -158,7 +163,7 @@ fn init(
         .spawn_bundle(MaterialMesh2dBundle {
             mesh: meshes.add(Mesh::from(&*jerry)).into(),
             material: materials.add(Jerry::COLOR.into()),
-            transform: Transform::default().with_translation(Vec3::Z),
+            transform: Transform::default().with_translation(Vec3::new(0., 0., 2.)),
             ..default()
         })
         .insert(JerryMarker);
@@ -199,17 +204,23 @@ fn shoot(
 fn tick_tom(
     game: Res<Game>,
     mut tom: ResMut<Tom>,
-    mut tom_query: Query<(&TomMarker, &mut Transform)>,
+    mut transforms: Query<&mut Transform>,
+    mut tom_query: Query<(Entity, &TomMarker)>,
+    room_query: Query<(Entity, &RoomMarker)>,
 ) {
-    let (_, mut tom_transform) = tom_query.single_mut();
-    let center_limit = ROOM_SIDE_LEN / 2. - tom.radius;
-    if tom_transform.translation.x.abs() > center_limit {
+    let (room_entity, _) = room_query.single();
+    let room_half_scale = transforms.get(room_entity).unwrap().scale / 2.;
+    let room_x_center_boundary = room_half_scale.x - tom.radius;
+    let room_y_center_boundary = room_half_scale.y - tom.radius;
+    let (tom_entity, _) = tom_query.single_mut();
+    let mut tom_transform = transforms.get_mut(tom_entity).unwrap();
+    if tom_transform.translation.x.abs() > room_x_center_boundary {
         tom.ds.x = -tom.ds.x;
-        tom_transform.translation.x = center_limit * tom_transform.translation.x.signum();
+        tom_transform.translation.x = room_x_center_boundary * tom_transform.translation.x.signum();
     }
-    if tom_transform.translation.y.abs() > center_limit {
+    if tom_transform.translation.y.abs() > room_y_center_boundary {
         tom.ds.y = -tom.ds.y;
-        tom_transform.translation.y = center_limit * tom_transform.translation.y.signum();
+        tom_transform.translation.y = room_y_center_boundary * tom_transform.translation.y.signum();
     }
     tom_transform.translation += tom.ds * (1. + game.score as f32 * 0.1);
     tom.ds *= Tom::FRICTION_COEFFICIENT;
@@ -218,16 +229,27 @@ fn tick_tom(
     }
 }
 
-fn tick_jerry(mut jerry: ResMut<Jerry>, mut jerry_query: Query<(&JerryMarker, &mut Transform)>) {
-    let (_, mut jerry_transform) = jerry_query.single_mut();
-    let center_limit = ROOM_SIDE_LEN / 2. - jerry.radius;
-    if jerry_transform.translation.x.abs() > center_limit {
+fn tick_jerry(
+    mut jerry: ResMut<Jerry>,
+    mut transforms: Query<&mut Transform>,
+    mut jerry_query: Query<(Entity, &JerryMarker)>,
+    room_query: Query<(Entity, &RoomMarker)>,
+) {
+    let (room_entity, _) = room_query.single();
+    let room_half_scale = transforms.get(room_entity).unwrap().scale / 2.;
+    let (jerry_entity, _) = jerry_query.single_mut();
+    let room_x_center_boundary = room_half_scale.x - jerry.radius;
+    let room_y_center_boundary = room_half_scale.y - jerry.radius;
+    let mut jerry_transform = transforms.get_mut(jerry_entity).unwrap();
+    if jerry_transform.translation.x.abs() > room_x_center_boundary {
         jerry.ds.x = -jerry.ds.x;
-        jerry_transform.translation.x = center_limit * jerry_transform.translation.x.signum();
+        jerry_transform.translation.x =
+            room_x_center_boundary * jerry_transform.translation.x.signum();
     }
-    if jerry_transform.translation.y.abs() > center_limit {
+    if jerry_transform.translation.y.abs() > room_y_center_boundary {
         jerry.ds.y = -jerry.ds.y;
-        jerry_transform.translation.y = center_limit * jerry_transform.translation.y.signum();
+        jerry_transform.translation.y =
+            room_y_center_boundary * jerry_transform.translation.y.signum();
     }
     jerry_transform.translation += jerry.ds;
     jerry.ds *= Jerry::FRICTION_COEFFICIENT;
